@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>قرار | QARAR</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#08AEB4;--ink:#2B2D36;--bg:#F1F4F9;--card:#fff;--mut:#6b7080;--line:#dfe4ec;--red:#d9534f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#eef1f6;--bg:#1b1d24;--card:#262932;--mut:#9aa0b2;--line:#363a46}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,Tahoma,sans-serif;max-width:520px;margin-inline:auto;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:10px;padding:14px 16px}
+header img.lg{width:42px;height:42px;border-radius:12px}
+header h1{font-size:19px;margin:0;flex:1;font-weight:800}
+header h1 small{display:block;font-size:12px;color:var(--mut);font-weight:400}
+.av{width:42px;height:42px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-size:22px;overflow:hidden;border:0;padding:0;cursor:pointer}
+.av img{width:100%;height:100%;object-fit:cover}
+nav{display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+nav button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600}
+main{padding:6px 16px 40px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid var(--line)}
+.hero{background:var(--ink);color:#fff;border-radius:20px;padding:20px;margin-bottom:12px}
+:root:not([data-theme="light"]) .hero{background:var(--teal)}
+.hero p{margin:0;opacity:.8;font-size:14px}
+.hero b{font-size:34px;display:block;margin:4px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.grid .card{margin:0;text-align:center;cursor:pointer}
+.grid b{display:block;font-size:24px;color:var(--teal)}
+h2{font-size:17px;margin:4px 0 10px}
+form{display:grid;gap:8px;margin-bottom:14px}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:12px;padding:11px;font-weight:600;cursor:pointer}
+.btn.alt{background:transparent;color:var(--mut);border:1px solid var(--line)}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+.item{display:flex;gap:10px;align-items:flex-start}
+.item>div{flex:1;min-width:0}
+.item small{color:var(--mut);display:block}
+.x{flex:none!important;background:none;border:0;color:var(--mut);cursor:pointer;font-size:18px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--teal)}
+.in{color:var(--teal)}.out{color:var(--red)}
+.empty{text-align:center;color:var(--mut);padding:18px 8px}
+.done b{text-decoration:line-through;opacity:.55}
+.ov{position:fixed;inset:0;background:var(--bg);z-index:9;overflow:auto;padding:24px 20px}
+.ov .box{max-width:420px;margin:0 auto;text-align:center}
+.ov img.big{width:120px;border-radius:26px;margin:10px 0}
+.avs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.avs .av{width:48px;height:48px;opacity:.55}.avs .av.sel{opacity:1;outline:3px solid var(--ink)}
+.maker{text-align:center}
+.maker p{margin:4px 0;color:var(--mut)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const LOGO="data:image/jpeg;base64,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";
+const AVS=["🦁","🌿","🚀","🌙","🔥","🦅","🌴","⭐"];
+const TABS=[["home","📊","لوحة التحكم"],["ideas","💡","أفكاري"],["projects","🚀","مشاريعي"],["money","💰","أموالي"],["goals","🎯","أهدافي"],["plan","📅","خطتي"],["about","👤","صانع التطبيق"]];
+const WELCOME=["قرارك اليوم يصنع مستقبلك غدًا.","أفكارك تستحق أن تُكتب، ومشاريعك تستحق أن تُنفَّذ.","ابدأ بخطوة صغيرة اليوم، وتابع حتى تصل."];
+let S={user:null,ideas:[],projects:[],txs:[],goals:[],plan:[]},tab="home",draft={av:0,photo:null,name:""};
+try{const r=localStorage.getItem("qarar");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem("qarar",JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=n=>Number(n||0).toLocaleString("ar-EG");
+const id=()=>Date.now()+Math.random();
+const sum=t=>S.txs.filter(x=>x.type==t).reduce((a,x)=>a+x.amt,0);
+const avatar=(u,cls="")=>`<button class="av ${cls}" data-act="profile" aria-label="الملف الشخصي">${u.photo?`<img src="${u.photo}" alt="">`:AVS[u.av||0]}</button>`;
+const empty=t=>`<div class="empty">${t}</div>`;
+const del=(k,i)=>`<button class="x" data-act="del" data-k="${k}" data-id="${i}" aria-label="حذف">✕</button>`;
+
+function welcome(){
+ const u=draft;
+ return `<div class="ov"><div class="box"><img class="big" src="${LOGO}" alt="قرار">
+ <h1 style="margin:0">أهلًا بك في قرار</h1>
+ <p style="color:var(--mut)">${WELCOME[0]}<br>سجّل أفكارك، خطّط لمشاريعك، تابع أهدافك وأدر أموالك في مكان واحد.</p>
+ <div class="avs">${AVS.map((a,i)=>`<button class="av ${!u.photo&&u.av==i?"sel":""}" data-act="pickav" data-i="${i}" aria-label="صورة ${i+1}">${a}</button>`).join("")}
+ ${u.photo?`<button class="av sel"><img src="${u.photo}" alt=""></button>`:""}</div>
+ <label class="btn alt" style="display:block;cursor:pointer;margin-bottom:10px">إضافة صورتك<input type="file" accept="image/*" id="ph" hidden></label>
+ <form data-form="start"><input name="name" value="${esc(u.name)}" placeholder="اسمك" required maxlength="40"><button class="btn">ابدأ رحلتك</button></form></div></div>`;
+}
+
+function view(){
+ if(tab=="home"){
+  const bal=sum("دخل")-sum("مصروف");
+  const act=S.projects.filter(p=>p.pr<100).length;
+  const gp=S.goals.length?Math.round(S.goals.reduce((a,g)=>a+Math.min(100,g.cur/g.tar*100),0)/S.goals.length):0;
+  return `<div class="hero"><p>الرصيد المتاح</p><b>${num(bal)}</b><p>دخل ${num(sum("دخل"))} · مصروف ${num(sum("مصروف"))} · ادخار ${num(sum("ادخار"))}</p></div>
+  <div class="grid">
+  <div class="card" data-act="tab" data-t="ideas"><b>${num(S.ideas.length)}</b>فكرة محفوظة</div>
+  <div class="card" data-act="tab" data-t="projects"><b>${num(act)}</b>مشروع جارٍ</div>
+  <div class="card" data-act="tab" data-t="goals"><b>${num(gp)}٪</b>متوسط تحقيق الأهداف</div>
+  <div class="card" data-act="tab" data-t="plan"><b>${num(S.plan.filter(p=>!p.done).length)}</b>خطوة قادمة</div></div>
+  <div class="card"><h2>آخر الأفكار</h2>${S.ideas.slice(0,3).map(i=>`<div class="item"><div><b>${esc(i.t)}</b></div></div>`).join("")||empty("لا توجد أفكار بعد. اكتب أول فكرة.")}</div>`;
+ }
+ if(tab=="ideas")return `<form data-form="ideas"><input name="t" placeholder="عنوان الفكرة" required><textarea name="n" rows="3" placeholder="تفاصيل الفكرة"></textarea><button class="btn">حفظ الفكرة</button></form>`+
+  (S.ideas.map(i=>`<div class="card item"><div><b>${esc(i.t)}</b><small>${esc(i.n)}</small></div>${del("ideas",i.id)}</div>`).join("")||empty("لا توجد أفكار بعد."));
+ if(tab=="projects")return `<form data-form="projects"><input name="t" placeholder="اسم المشروع" required><input name="n" placeholder="الخطوة التالية"><button class="btn">إضافة المشروع</button></form>`+
+  (S.projects.map(p=>`<div class="card"><div class="item"><div><b>${esc(p.t)}</b><small>${esc(p.n)}</small></div>${del("projects",p.id)}</div>
+  <div class="bar"><i style="width:${p.pr}%"></i></div><div class="row" style="margin-top:8px"><small>${num(p.pr)}٪ ${p.pr>=100?"· مكتمل":""}</small><input type="range" min="0" max="100" step="5" value="${p.pr}" data-act="prog" data-id="${p.id}" aria-label="نسبة الإنجاز"></div></div>`).join("")||empty("لا توجد مشاريع بعد."));
+ if(tab=="money")return `<div class="grid"><div class="card"><b class="in">${num(sum("دخل"))}</b>الدخل</div><div class="card"><b class="out">${num(sum("مصروف"))}</b>المصروفات</div></div>
+  <form data-form="money"><div class="row"><select name="type"><option>دخل</option><option>مصروف</option><option>ادخار</option></select><input name="amt" type="number" min="0" step="any" placeholder="المبلغ" required></div><input name="n" placeholder="الوصف"><button class="btn">تسجيل العملية</button></form>`+
+  (S.txs.map(x=>`<div class="card item"><div><b class="${x.type=="مصروف"?"out":"in"}">${x.type=="مصروف"?"−":"+"}${num(x.amt)}</b> <small style="display:inline">${x.type} · ${esc(x.n)}</small></div>${del("txs",x.id)}</div>`).join("")||empty("لا توجد عمليات بعد."));
+ if(tab=="goals")return `<form data-form="goals"><input name="t" placeholder="هدفك" required><input name="tar" type="number" min="1" step="any" placeholder="القيمة المستهدفة" required><button class="btn">إضافة الهدف</button></form>`+
+  (S.goals.map(g=>{const p=Math.min(100,Math.round(g.cur/g.tar*100));return `<div class="card"><div class="item"><div><b>${esc(g.t)}</b><small>${num(g.cur)} من ${num(g.tar)} · ${num(p)}٪</small></div>${del("goals",g.id)}</div><div class="bar"><i style="width:${p}%"></i></div>
+  <div class="row" style="margin-top:8px"><input type="number" min="0" step="any" placeholder="أضف تقدمًا" data-in="${g.id}"><button class="btn" data-act="gadd" data-id="${g.id}" style="flex:none">إضافة</button></div></div>`}).join("")||empty("لا توجد أهداف بعد."));
+ if(tab=="plan")return `<form data-form="plan"><input name="t" placeholder="ما الذي ستفعله؟" required><input name="d" type="date"><button class="btn">إضافة للخطة</button></form>`+
+  (S.plan.slice().sort((a,b)=>(a.d||"9")>(b.d||"9")?1:-1).map(p=>`<div class="card item ${p.done?"done":""}"><input type="checkbox" style="width:22px;flex:none" ${p.done?"checked":""} data-act="chk" data-id="${p.id}" aria-label="تم"><div><b>${esc(p.t)}</b><small>${p.d||""}</small></div>${del("plan",p.id)}</div>`).join("")||empty("خطتك فارغة. أضف أول خطوة."));
+ if(tab=="about")return `<div class="card maker"><img src="${LOGO}" alt="" style="width:90px;border-radius:20px"><h2>صانع التطبيق</h2><b>عبد الرحمن ياسين عبد الرحمن</b><p>مبرمج</p><p>السكن: الخرطوم – أم درمان</p><p>للتواصل: <a href="tel:0921674852" style="color:var(--teal)" dir="ltr">0921674852</a></p></div>
+  <div class="card"><h2>ملفك الشخصي</h2><form data-form="rename"><input name="name" value="${esc(S.user.name)}" required><button class="btn">تغيير الاسم</button></form><button class="btn alt" style="width:100%" data-act="profile">تغيير الصورة</button></div>`;
+}
+
+function render(){
+ const app=document.getElementById("app");
+ if(!S.user){app.innerHTML=welcome();return}
+ app.innerHTML=`<header><img class="lg" src="${LOGO}" alt="قرار"><h1>مرحبًا، ${esc(S.user.name)}<small>${WELCOME[new Date().getDate()%3]}</small></h1>${avatar(S.user)}</header>
+ <nav>${TABS.map(t=>`<button class="${tab==t[0]?"on":""}" data-act="tab" data-t="${t[0]}">${t[1]} ${t[2]}</button>`).join("")}</nav><main>${view()}</main>`;
+}
+
+function readPhoto(f){
+ const r=new FileReader();
+ r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),s=Math.min(im.width,im.height),z=128;c.width=c.height=z;
+  c.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,z,z);const d=c.toDataURL("image/jpeg",.8);
+  if(S.user){S.user.photo=d;save()}else draft.photo=d;render()};im.src=r.result};
+ r.readAsDataURL(f);
+}
+
+document.addEventListener("change",e=>{
+ const t=e.target;
+ if(t.id=="ph"&&t.files[0])readPhoto(t.files[0]);
+ if(t.dataset.act=="chk"){const p=S.plan.find(x=>x.id==t.dataset.id);p.done=t.checked;save();render()}
+ if(t.dataset.act=="prog"){S.projects.find(x=>x.id==t.dataset.id).pr=+t.value;save();render()}
+});
+document.addEventListener("click",e=>{
+ const b=e.target.closest("[data-act]");if(!b||b.type=="range"||b.type=="checkbox")return;
+ const a=b.dataset.act;
+ if(a=="tab"){tab=b.dataset.t;render();scrollTo(0,0)}
+ if(a=="pickav"){draft.av=+b.dataset.i;draft.photo=null;draft.name=document.querySelector("[name=name]").value;render()}
+ if(a=="profile"){const x=document.createElement("input");x.type="file";x.accept="image/*";x.onchange=()=>x.files[0]&&readPhoto(x.files[0]);x.click()}
+ if(a=="del"){const k=b.dataset.k;S[k]=S[k].filter(x=>x.id!=b.dataset.id);save();render()}
+ if(a=="gadd"){const v=+document.querySelector(`[data-in="${b.dataset.id}"]`).value;if(v>0){S.goals.find(x=>x.id==b.dataset.id).cur+=v;save();render()}}
+});
+document.addEventListener("submit",e=>{
+ e.preventDefault();const f=e.target,k=f.dataset.form,d=Object.fromEntries(new FormData(f));
+ if(k=="start")S.user={name:d.name.trim(),av:draft.av,photo:draft.photo};
+ if(k=="rename")S.user.name=d.name.trim();
+ if(k=="ideas")S.ideas.unshift({id:id(),t:d.t,n:d.n});
+ if(k=="projects")S.projects.unshift({id:id(),t:d.t,n:d.n,pr:0});
+ if(k=="money")S.txs.unshift({id:id(),type:d.type,amt:+d.amt,n:d.n});
+ if(k=="goals")S.goals.unshift({id:id(),t:d.t,tar:+d.tar,cur:0});
+ if(k=="plan")S.plan.unshift({id:id(),t:d.t,d:d.d,done:false});
+ save();render();
+});
+render();
+</script>
+</body>
+</html>
