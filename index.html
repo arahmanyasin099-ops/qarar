@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>قرار | QARAR</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#08AEB4"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><title>قرار | QARAR</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--teal:#08AEB4;--ink:#2B2D36;--bg:#F1F4F9;--card:#fff;--mut:#6b7080;--line:#dfe4ec;--red:#d9534f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -157,6 +157,7 @@ document.addEventListener("submit",e=>{
  save();render();
 });
 render();
+if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
 </body>
 </html>
