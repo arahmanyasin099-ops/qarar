@@ -8,6 +8,15 @@
 <style>
 :root{--teal:#08AEB4;--ink:#2B2D36;--bg:#F1F4F9;--card:#fff;--mut:#6b7080;--line:#dfe4ec;--red:#d9534f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#eef1f6;--bg:#1b1d24;--card:#262932;--mut:#9aa0b2;--line:#363a46}}
+html[data-theme="dark"]{--ink:#eef1f6;--bg:#1b1d24;--card:#262932;--mut:#9aa0b2;--line:#363a46}
+.ch{display:flex;gap:8px;height:120px;margin-bottom:6px}.ch>div{flex:1;text-align:center;font-size:12px;color:var(--mut)}
+.ch .b{display:flex;gap:3px;align-items:flex-end;height:96px;justify-content:center}.ch .b i{width:42%;border-radius:4px 4px 0 0;display:block;min-height:2px}
+.set{display:grid;gap:8px}
+.md{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10;display:grid;place-items:center;padding:20px}
+.md .card{max-width:360px;width:100%;text-align:center;margin:0;padding:20px}
+.stars{display:flex;gap:6px;justify-content:center;direction:ltr;margin:12px 0}
+.stars button{background:none;border:0;font-size:40px;color:var(--line);cursor:pointer;padding:0;line-height:1}
+.stars button.on{color:#f5b301}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,Tahoma,sans-serif;max-width:520px;margin-inline:auto;min-height:100vh}
@@ -63,9 +72,19 @@ const LOGO="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGB
 const AVS=["🦁","🌿","🚀","🌙","🔥","🦅","🌴","⭐"];
 const TABS=[["home","📊","لوحة التحكم"],["ideas","💡","أفكاري"],["projects","🚀","مشاريعي"],["money","💰","أموالي"],["goals","🎯","أهدافي"],["plan","📅","خطتي"],["about","👤","صانع التطبيق"]];
 const WELCOME=["قرارك اليوم يصنع مستقبلك غدًا.","أفكارك تستحق أن تُكتب، ومشاريعك تستحق أن تُنفَّذ.","ابدأ بخطوة صغيرة اليوم، وتابع حتى تصل."];
-let S={user:null,ideas:[],projects:[],txs:[],goals:[],plan:[]},tab="home",draft={av:0,photo:null,name:""};
+let S={theme:"auto",user:null,ideas:[],projects:[],txs:[],goals:[],plan:[]},tab="home",draft={av:0,photo:null,name:""};
 try{const r=localStorage.getItem("qarar");if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem("qarar",JSON.stringify(S))}catch(e){}};
+let rate={open:false,v:0,c:"",sent:false};
+function rateModal(){
+ const v=rate.v;
+ return `<div class="md"><div class="card"><h2>${rate.sent?"شكرًا لتقييمك!":"ما رأيك في تطبيق قرار؟"}</h2>
+ <p style="color:var(--mut);margin:0">${rate.sent?"رأيك يساعدنا على تطوير التطبيق.":"اضغط على النجوم لتقييم تجربتك"}</p>
+ <div class="stars">${[1,2,3,4,5].map(i=>`<button class="${i<=v?"on":""}" data-act="star" data-v="${i}" aria-label="${i} من 5">★</button>`).join("")}</div>
+ ${v&&!rate.sent?`<textarea id="rc" rows="2" placeholder="اكتب ملاحظة (اختياري)">${esc(rate.c)}</textarea><div class="set" style="margin-top:8px"><button class="btn" data-act="rsend">إرسال التقييم</button></div>`:""}
+ ${rate.sent?`<div class="set"><button class="btn" data-act="wa">إرسال تقييمك عبر واتساب</button></div>`:""}
+ <button class="btn alt" style="width:100%;margin-top:8px" data-act="rclose">${rate.sent?"إغلاق":"ليس الآن"}</button></div></div>`;
+}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const num=n=>Number(n||0).toLocaleString("ar-EG");
 const id=()=>Date.now()+Math.random();
@@ -85,6 +104,17 @@ function welcome(){
  <form data-form="start"><input name="name" value="${esc(u.name)}" placeholder="اسمك" required maxlength="40"><button class="btn">ابدأ رحلتك</button></form></div></div>`;
 }
 
+function chart(){
+ const m=[],n=new Date();
+ for(let i=5;i>=0;i--){const x=new Date(n.getFullYear(),n.getMonth()-i,1);m.push({k:x.getFullYear()*12+x.getMonth(),l:x.toLocaleDateString("ar",{month:"short"}),i:0,o:0})}
+ S.txs.forEach(t=>{const x=new Date(t.d||Date.now()),r=m.find(q=>q.k==x.getFullYear()*12+x.getMonth());if(r){if(t.type=="دخل")r.i+=t.amt;if(t.type=="مصروف")r.o+=t.amt}});
+ const mx=Math.max(1,...m.map(r=>Math.max(r.i,r.o)));
+ return `<div class="card"><h2>الدخل والمصروفات (آخر ٦ أشهر)</h2><div class="ch">${m.map(r=>`<div><div class="b"><i style="height:${r.i/mx*100}%;background:var(--teal)"></i><i style="height:${r.o/mx*100}%;background:var(--red)"></i></div>${r.l}</div>`).join("")}</div><small style="color:var(--mut)">تركوازي: دخل · أحمر: مصروف</small></div>`;
+}
+function due(){
+ const t=new Date().toISOString().slice(0,10),l=S.plan.filter(p=>!p.done&&p.d&&p.d<=t);
+ return l.length?`<div class="card" style="border-color:var(--teal)"><h2>تذكير</h2>${l.map(p=>`<div class="item"><div><b>${esc(p.t)}</b><small>${p.d<t?"متأخرة":"اليوم"} · ${p.d}</small></div></div>`).join("")}</div>`:"";
+}
 function view(){
  if(tab=="home"){
   const bal=sum("دخل")-sum("مصروف");
@@ -96,7 +126,7 @@ function view(){
   <div class="card" data-act="tab" data-t="projects"><b>${num(act)}</b>مشروع جارٍ</div>
   <div class="card" data-act="tab" data-t="goals"><b>${num(gp)}٪</b>متوسط تحقيق الأهداف</div>
   <div class="card" data-act="tab" data-t="plan"><b>${num(S.plan.filter(p=>!p.done).length)}</b>خطوة قادمة</div></div>
-  <div class="card"><h2>آخر الأفكار</h2>${S.ideas.slice(0,3).map(i=>`<div class="item"><div><b>${esc(i.t)}</b></div></div>`).join("")||empty("لا توجد أفكار بعد. اكتب أول فكرة.")}</div>`;
+  ${due()}${chart()}<div class="card"><h2>آخر الأفكار</h2>${S.ideas.slice(0,3).map(i=>`<div class="item"><div><b>${esc(i.t)}</b></div></div>`).join("")||empty("لا توجد أفكار بعد. اكتب أول فكرة.")}</div>`;
  }
  if(tab=="ideas")return `<form data-form="ideas"><input name="t" placeholder="عنوان الفكرة" required><textarea name="n" rows="3" placeholder="تفاصيل الفكرة"></textarea><button class="btn">حفظ الفكرة</button></form>`+
   (S.ideas.map(i=>`<div class="card item"><div><b>${esc(i.t)}</b><small>${esc(i.n)}</small></div>${del("ideas",i.id)}</div>`).join("")||empty("لا توجد أفكار بعد."));
@@ -104,7 +134,7 @@ function view(){
   (S.projects.map(p=>`<div class="card"><div class="item"><div><b>${esc(p.t)}</b><small>${esc(p.n)}</small></div>${del("projects",p.id)}</div>
   <div class="bar"><i style="width:${p.pr}%"></i></div><div class="row" style="margin-top:8px"><small>${num(p.pr)}٪ ${p.pr>=100?"· مكتمل":""}</small><input type="range" min="0" max="100" step="5" value="${p.pr}" data-act="prog" data-id="${p.id}" aria-label="نسبة الإنجاز"></div></div>`).join("")||empty("لا توجد مشاريع بعد."));
  if(tab=="money")return `<div class="grid"><div class="card"><b class="in">${num(sum("دخل"))}</b>الدخل</div><div class="card"><b class="out">${num(sum("مصروف"))}</b>المصروفات</div></div>
-  <form data-form="money"><div class="row"><select name="type"><option>دخل</option><option>مصروف</option><option>ادخار</option></select><input name="amt" type="number" min="0" step="any" placeholder="المبلغ" required></div><input name="n" placeholder="الوصف"><button class="btn">تسجيل العملية</button></form>`+
+  ${chart()}<form data-form="money"><div class="row"><select name="type"><option>دخل</option><option>مصروف</option><option>ادخار</option></select><input name="amt" type="number" min="0" step="any" placeholder="المبلغ" required></div><input name="n" placeholder="الوصف"><button class="btn">تسجيل العملية</button></form>`+
   (S.txs.map(x=>`<div class="card item"><div><b class="${x.type=="مصروف"?"out":"in"}">${x.type=="مصروف"?"−":"+"}${num(x.amt)}</b> <small style="display:inline">${x.type} · ${esc(x.n)}</small></div>${del("txs",x.id)}</div>`).join("")||empty("لا توجد عمليات بعد."));
  if(tab=="goals")return `<form data-form="goals"><input name="t" placeholder="هدفك" required><input name="tar" type="number" min="1" step="any" placeholder="القيمة المستهدفة" required><button class="btn">إضافة الهدف</button></form>`+
   (S.goals.map(g=>{const p=Math.min(100,Math.round(g.cur/g.tar*100));return `<div class="card"><div class="item"><div><b>${esc(g.t)}</b><small>${num(g.cur)} من ${num(g.tar)} · ${num(p)}٪</small></div>${del("goals",g.id)}</div><div class="bar"><i style="width:${p}%"></i></div>
@@ -112,14 +142,16 @@ function view(){
  if(tab=="plan")return `<form data-form="plan"><input name="t" placeholder="ما الذي ستفعله؟" required><input name="d" type="date"><button class="btn">إضافة للخطة</button></form>`+
   (S.plan.slice().sort((a,b)=>(a.d||"9")>(b.d||"9")?1:-1).map(p=>`<div class="card item ${p.done?"done":""}"><input type="checkbox" style="width:22px;flex:none" ${p.done?"checked":""} data-act="chk" data-id="${p.id}" aria-label="تم"><div><b>${esc(p.t)}</b><small>${p.d||""}</small></div>${del("plan",p.id)}</div>`).join("")||empty("خطتك فارغة. أضف أول خطوة."));
  if(tab=="about")return `<div class="card maker"><img src="${LOGO}" alt="" style="width:90px;border-radius:20px"><h2>صانع التطبيق</h2><b>عبد الرحمن ياسين عبد الرحمن</b><p>مبرمج</p><p>السكن: الخرطوم – أم درمان</p><p>للتواصل: <a href="tel:0921674852" style="color:var(--teal)" dir="ltr">0921674852</a></p></div>
-  <div class="card"><h2>ملفك الشخصي</h2><form data-form="rename"><input name="name" value="${esc(S.user.name)}" required><button class="btn">تغيير الاسم</button></form><button class="btn alt" style="width:100%" data-act="profile">تغيير الصورة</button></div>`;
+  <div class="card"><h2>ملفك الشخصي</h2><form data-form="rename"><input name="name" value="${esc(S.user.name)}" required><button class="btn">تغيير الاسم</button></form><button class="btn alt" style="width:100%" data-act="profile">تغيير الصورة</button></div>
+  <div class="card"><h2>الإعدادات</h2><div class="set"><button class="btn alt" data-act="theme">المظهر: ${({auto:"تلقائي",dark:"ليلي",light:"فاتح"})[S.theme||"auto"]}</button><button class="btn alt" data-act="notif">تفعيل التنبيهات</button><button class="btn alt" data-act="ropen">قيّم التطبيق${S.rating?" (تقييمك: "+S.rating.v+"/5)":""}</button><button class="btn alt" data-act="export">تصدير نسخة احتياطية</button><label class="btn alt" style="display:block;text-align:center;cursor:pointer">استيراد نسخة احتياطية<input type="file" accept="application/json" id="imp" hidden></label></div></div>`;
 }
 
 function render(){
+ S.theme=="auto"||!S.theme?document.documentElement.removeAttribute("data-theme"):document.documentElement.dataset.theme=S.theme;
  const app=document.getElementById("app");
  if(!S.user){app.innerHTML=welcome();return}
  app.innerHTML=`<header><img class="lg" src="${LOGO}" alt="قرار"><h1>مرحبًا، ${esc(S.user.name)}<small>${WELCOME[new Date().getDate()%3]}</small></h1>${avatar(S.user)}</header>
- <nav>${TABS.map(t=>`<button class="${tab==t[0]?"on":""}" data-act="tab" data-t="${t[0]}">${t[1]} ${t[2]}</button>`).join("")}</nav><main>${view()}</main>`;
+ <nav>${TABS.map(t=>`<button class="${tab==t[0]?"on":""}" data-act="tab" data-t="${t[0]}">${t[1]} ${t[2]}</button>`).join("")}</nav><main>${view()}</main>${rate.open?rateModal():""}`;
 }
 
 function readPhoto(f){
@@ -133,6 +165,7 @@ function readPhoto(f){
 document.addEventListener("change",e=>{
  const t=e.target;
  if(t.id=="ph"&&t.files[0])readPhoto(t.files[0]);
+ if(t.id=="imp"&&t.files[0])t.files[0].text().then(x=>{try{const d=JSON.parse(x);if(d&&d.user){S=Object.assign(S,d);save();render();alert("تم استيراد النسخة")}else alert("ملف غير صالح")}catch(e){alert("ملف غير صالح")}});
  if(t.dataset.act=="chk"){const p=S.plan.find(x=>x.id==t.dataset.id);p.done=t.checked;save();render()}
  if(t.dataset.act=="prog"){S.projects.find(x=>x.id==t.dataset.id).pr=+t.value;save();render()}
 });
@@ -143,6 +176,14 @@ document.addEventListener("click",e=>{
  if(a=="pickav"){draft.av=+b.dataset.i;draft.photo=null;draft.name=document.querySelector("[name=name]").value;render()}
  if(a=="profile"){const x=document.createElement("input");x.type="file";x.accept="image/*";x.onchange=()=>x.files[0]&&readPhoto(x.files[0]);x.click()}
  if(a=="del"){const k=b.dataset.k;S[k]=S[k].filter(x=>x.id!=b.dataset.id);save();render()}
+ if(a=="star"){const c=document.getElementById("rc");if(c)rate.c=c.value;rate.v=+b.dataset.v;render()}
+ if(a=="rsend"){const c=document.getElementById("rc");S.rating={v:rate.v,c:(c?c.value:rate.c).trim(),d:Date.now()};S.rated=true;rate.sent=true;save();render()}
+ if(a=="wa"){const v=S.rating?S.rating.v:rate.v,m="تقييمي لتطبيق قرار: "+"★".repeat(v)+"☆".repeat(5-v)+" ("+v+"/5)"+(S.rating&&S.rating.c?"\n"+S.rating.c:"");window.open("https://wa.me/249921674852?text="+encodeURIComponent(m),"_blank")}
+ if(a=="rclose"){if(!rate.sent){S.later=Date.now();save()}rate.open=false;rate.sent=false;render()}
+ if(a=="ropen"){rate={open:true,v:S.rating?S.rating.v:0,c:"",sent:false};render()}
+ if(a=="theme"){S.theme={auto:"dark",dark:"light",light:"auto"}[S.theme||"auto"];save();render()}
+ if(a=="export"){const u=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"})),l=document.createElement("a");l.href=u;l.download="qarar-backup.json";l.click()}
+ if(a=="notif"){try{Notification.requestPermission().then(p=>{alert(p=="granted"?"تم تفعيل التنبيهات":"لم يتم السماح بالتنبيهات");notify()})}catch(e){alert("المتصفح لا يدعم التنبيهات")}}
  if(a=="gadd"){const v=+document.querySelector(`[data-in="${b.dataset.id}"]`).value;if(v>0){S.goals.find(x=>x.id==b.dataset.id).cur+=v;save();render()}}
 });
 document.addEventListener("submit",e=>{
@@ -151,12 +192,19 @@ document.addEventListener("submit",e=>{
  if(k=="rename")S.user.name=d.name.trim();
  if(k=="ideas")S.ideas.unshift({id:id(),t:d.t,n:d.n});
  if(k=="projects")S.projects.unshift({id:id(),t:d.t,n:d.n,pr:0});
- if(k=="money")S.txs.unshift({id:id(),type:d.type,amt:+d.amt,n:d.n});
+ if(k=="money")S.txs.unshift({id:id(),type:d.type,amt:+d.amt,n:d.n,d:Date.now()});
  if(k=="goals")S.goals.unshift({id:id(),t:d.t,tar:+d.tar,cur:0});
  if(k=="plan")S.plan.unshift({id:id(),t:d.t,d:d.d,done:false});
  save();render();
 });
-render();
+function notify(){try{
+ if(!S.user||Notification.permission!="granted")return;
+ const t=new Date().toISOString().slice(0,10),l=S.plan.filter(p=>!p.done&&p.d&&p.d<=t);
+ if(l.length&&localStorage.getItem("qn")!=t){localStorage.setItem("qn",t);navigator.serviceWorker.ready.then(r=>r.showNotification("قرار",{body:"لديك "+l.length+" خطوة تنتظرك اليوم",icon:"icon-192.png"}))}
+}catch(e){}}
+if(S.user){S.opens=(S.opens||0)+1;save()}
+render();notify();
+if(S.user&&!S.rated&&S.opens>=3&&(!S.later||Date.now()-S.later>2592e5))setTimeout(()=>{const t=document.activeElement&&document.activeElement.tagName;if(t!="INPUT"&&t!="TEXTAREA"){rate.open=true;render()}},4000);
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
 </body>
